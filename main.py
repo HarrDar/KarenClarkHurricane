@@ -1,6 +1,7 @@
 import math
 import os
 from storm import Storm
+import pdb
 
 fileName = "hurdat2.txt"
 
@@ -18,10 +19,12 @@ def readFile():
 			if len(data) == 4:
 				if newstorm is not None:
 					storms.append(newstorm)
+					print("Read in Storm", newstorm.storm_name)
 				newstorm = Storm(data)
 			elif newstorm is not None and len(data) == 21:
 				newstorm.addReading(data)
 			else:
 				print("ERR: IMPROPER DATA LINE")
 	return storms
+
 main()

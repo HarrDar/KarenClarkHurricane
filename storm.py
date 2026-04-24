@@ -25,7 +25,11 @@ class Reading:
 	winds = {}
 
 	def __init__(self,data):
-		self.time = datetime.date.fromisoformat(data[0] + "T" + data[1].replace(" ","") + "00")
+		# self.time = datetime.datetime.fromisoformat(data[0] + data[1].replace(" ",""))
+		# YYYYMMDD & HHMM
+		cleanDate = data[0].replace(" ","")
+		cleanTime = data[1].replace(" ","")
+		self.time = datetime.datetime(int(cleanDate[:4]), int(cleanDate[4:6]), int(cleanDate[6:8]), int(cleanTime[:2]), int(cleanTime[2:4]))
 		self.landedTrue = data[2]
 		self.status = data[3].replace(" ", "")
 		self.latN = float(data[4][:-1])
@@ -35,20 +39,19 @@ class Reading:
 		self.max_wind_kts = data[6]
 		self.max_pressure = data[7]
 		for i in range(12):
-			winds[wind_types[i]] = int(data[8+i])
-
-
+			self.winds[self.wind_types[i]] = int(data[8+i])
 
 class Storm:
 	storm_id = ""
 	storm_name = ""
 	number_obs = 0
-	readings = []
+	readings = None
 	
 	def __init__(self, data):
 		self.storm_id = data[0]
 		self.storm_name = data[1].replace(" ", "")
 		self.number_obs = int(data[2])
+		self.readings = []
 
 	def addReading(self,data):
 		self.readings.append(Reading(data))
