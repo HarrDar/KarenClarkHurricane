@@ -4,15 +4,16 @@ import storm
 import geo
 import report
 
-fileName = "hurdat2.txt"
-locationFile = "florida.geojson"
+fileName = "data/hurdat2.txt"
+locationFile = "data/florida.geojson"
+reportFile = "reports/FloridaReport.txt"
 
 def main():
 	# Read in Data
 	storms = storm.readStormFile(fileName)
 	location = geo.Location("Florida", locationFile)
 
-	f = report.createReport("FloridaReport.txt")
+	f = report.createReport(reportFile)
 	for st in storms:
 		if location.hitBy(st):
 			report.addStormToReport(f,st)
