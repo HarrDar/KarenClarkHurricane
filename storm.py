@@ -4,21 +4,21 @@ import datetime
 def readStormFile(fileName):
 	storms = []
 	newstorm = None
-	i = 0
+	ct = 0
 	file = open(fileName, 'r')
 	for line in file:
 		data = line.strip().split(',')
 		if len(data) == 4:
 			if newstorm is not None:
 				storms.append(newstorm)
-				print("Read in Storm", newstorm.storm_name)
+				ct +=1
 			newstorm = Storm(data)
 		elif newstorm is not None and len(data) == 21:
 			newstorm.addReading(data)
 		else:
 			print("ERR: IMPROPER DATA LINE")
 	file.close()
-	print("Read in Storm", newstorm.storm_name)
+	print("Read in " + str(ct) + " Storms from " + fileName)
 	return storms
 
 class Reading:
