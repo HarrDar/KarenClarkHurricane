@@ -1,30 +1,36 @@
 import math
 import os
-from storm import Storm
-import pdb
+import storm
+import geo
 
 fileName = "hurdat2.txt"
+locationFile = "florida.geojson"
 
 def main():
-	storms = readFile()
-	print(storms[50:100])
+	# Read in Data
+	storms = storm.readFile(fileName)
+	location = geo.Location("Florida", locationFile)
 
-def readFile():
-	storms = []
-	newstorm = None
-	i = 0
-	with open (fileName, 'r') as file:
-		for line in file:
-			data = line.strip().split(',')
-			if len(data) == 4:
-				if newstorm is not None:
-					storms.append(newstorm)
-					print("Read in Storm", newstorm.storm_name)
-				newstorm = Storm(data)
-			elif newstorm is not None and len(data) == 21:
-				newstorm.addReading(data)
-			else:
-				print("ERR: IMPROPER DATA LINE")
-	return storms
+	# Take Input
+	name = "MILTON"
+	st = None
+	for s in storms:
+		if s.getName() == name:
+			st = s
+			break
+
+	if st is None:
+		print("STORM NAME NOT FOUND")
+		exit()
+
+	# Find Data
+	for reading in st.getReadings():
+		if location.contains(reading.getLocation()):
+			reading.isLanded()
+			print("LANDED")
+		else:
+			print("NOT LANDED")
+
+	# Print Stuff
 
 main()
