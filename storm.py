@@ -1,23 +1,24 @@
 import os
 import datetime
 
-def readFile(fileName):
+def readStormFile(fileName):
 	storms = []
 	newstorm = None
 	i = 0
-	with open (fileName, 'r') as file:
-		for line in file:
-			data = line.strip().split(',')
-			if len(data) == 4:
-				if newstorm is not None:
-					storms.append(newstorm)
-					print("Read in Storm", newstorm.storm_name)
-				newstorm = Storm(data)
-			elif newstorm is not None and len(data) == 21:
-				newstorm.addReading(data)
-			else:
-				print("ERR: IMPROPER DATA LINE")
-		print("Read in Storm", newstorm.storm_name)
+	file = open(fileName, 'r')
+	for line in file:
+		data = line.strip().split(',')
+		if len(data) == 4:
+			if newstorm is not None:
+				storms.append(newstorm)
+				print("Read in Storm", newstorm.storm_name)
+			newstorm = Storm(data)
+		elif newstorm is not None and len(data) == 21:
+			newstorm.addReading(data)
+		else:
+			print("ERR: IMPROPER DATA LINE")
+	file.close()
+	print("Read in Storm", newstorm.storm_name)
 	return storms
 
 class Reading:
@@ -62,25 +63,35 @@ class Reading:
 		self.status = data[3].replace(" ", "")
 		self.lati = float(data[4][:-1])*(-1 if data[4][-1] == "S" else 1)
 		self.longi = float(data[5][:-1])*(-1 if data[5][-1] == "W" else 1)
-		self.max_wind_kts = data[6]
-		self.max_pressure = data[7]
+		self.max_wind_kts = int(data[6])
+		self.max_pressure = int(data[7])
 		for i in range(12):
 			self.winds[self.wind_types[i]] = int(data[8+i])
 
 	def getLocation(self):
 		return [self.lati, self.longi]
 
-	def isLanded(self):
+	def getDate(self):
+		return self.time
+
+	def Landed(self):
 		self.landed = True
 
-	def isNotLanded(self):
+	def isLanded(self):
+		return self.landed
+
+	def NotLanded(self):
 		self.landed = False
+
+	def getMaxWind(self):
+		return self.max_wind_kts
 
 class Storm:
 	storm_id = ""
 	storm_name = ""
 	number_obs = 0
 	readings = None
+	maxWindSpeed = 0
 	
 	def __init__(self, data):
 		self.storm_id = data[0]
@@ -89,10 +100,20 @@ class Storm:
 		self.readings = []
 
 	def addReading(self,data):
-		self.readings.append(Reading(data))
+		newReading = Reading(data)
+		self.readings.append(newReading)
+		self.maxWindSpeed = max(self.maxWindSpeed, newReading.getMaxWind())
 
 	def getReadings(self):
 		return self.readings
 
 	def getName(self):
 		return self.storm_name
+
+	def getMaxWindSpeed(self):
+		return self.maxWindSpeed
+
+	def getLandfallDate(self):
+		for reading in self.readings:
+			if reading.isLanded():
+				return reading.getDate()

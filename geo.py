@@ -11,8 +11,16 @@ class Location:
 
 	def __init__(self,name,file):
 		self.name = name
-		with open(file) as f:
-			self.polygon = geojson.load(f)
+		f = open(file, 'r')
+		self.polygon = geojson.load(f)
+		f.close()
+
+	def hitBy(self, storm):
+		for reading in storm.getReadings():
+			if self.contains(reading.getLocation()):
+				reading.Landed()
+				return True
+		return False
 
 	def contains(self,point):
 		return self.containsSpot(point[0],point[1])
