@@ -6,6 +6,7 @@ def readStormFile(fileName):
 	newstorm = None
 	ct = 0
 	file = open(fileName, 'r')
+	print("File", fileName, "opened, beginning processing...")
 	for line in file:
 		data = line.strip().split(',')
 		if len(data) == 4:

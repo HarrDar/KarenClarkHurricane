@@ -9,18 +9,23 @@ defaultData = "data/hurdat2.txt"
 defaultLocation = "data/florida.geojson"
 defaultReport = "reports/FloridaReport.txt"
 
-flags = ['-d', '-h', '-l', '-r']
+flags = ['-d', '-h', '-l', '-r', '-p']
 
 def isFileFormat(file, form):
 	return file[-1*len(form):] == form
 
+def stripFileFormat(file, form):
+	return file[:-1*len(form)]
+
 # arguments processed in order given in command; i.e. -d will overwrite previous flags
-# -d = use all defaults
+# -d = use all defaults. this happens by default but its here if you want to be specific
 # -h = set hurricane data file
 # -l = set location file
 # -r = set output file
+# -p = print output to console instead
 def generateReport(args):
 	dataFile, locationFile, reportFile = defaultData, defaultLocation, defaultReport
+	toPrint = False
 
 	# Argument Handling
 	i = 1
@@ -37,6 +42,8 @@ def generateReport(args):
 				dataFile = defaultData
 				locationFile = defaultLocation
 				reportFile = defaultReport
+			elif a == "-p":
+				toPrint = True
 			# For other flags with given arguments...
 			else:
 				# If end of arguments
@@ -84,8 +91,9 @@ def generateReport(args):
 
 	# Read in Data
 	storms = storm.readStormFile(dataFile)
-	location = geo.Location("Florida", locationFile)
+	location = geo.Location(stripFileFormat(locationFile, '.geojson'), locationFile)
 
-	report.populateReport(reportFile,storms,location)
+	# Generate Report
+	report.populateReport(reportFile,storms,location, toPrint)
 			
 generateReport(sys.argv)
