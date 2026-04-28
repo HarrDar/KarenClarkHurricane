@@ -5,6 +5,13 @@ def createReport(fileName):
 	f.write("NAME           LANDFALL_DATE  MAX_WIND_SPEED(kn) \n")
 	return f
 
+def populateReport(reportFile, storms, location):
+	f = createReport(reportFile)
+	for st in storms:
+		if location.hitBy(st):
+			addStormToReport(f,st)
+	f.close()
+
 def addStormToReport(f, storm):
 	f.write(reportFormat(storm))
 
