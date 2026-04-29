@@ -18,6 +18,9 @@ def readStormFile(fileName):
 			newstorm.addReading(data)
 		else:
 			print("ERR: IMPROPER DATA LINE")
+	if newstorm is not None:
+		storms.append(newstorm)
+		ct += 1
 	file.close()
 	print("Read in " + str(ct) + " Storms from " + fileName)
 	return storms
