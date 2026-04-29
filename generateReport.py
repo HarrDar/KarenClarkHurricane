@@ -22,7 +22,7 @@ def stripFileFormat(file, form):
 	return nf
 
 # arguments processed in order given in command; i.e. -d will overwrite previous flags
-# -def = use all defaults. this happens by default but its here if you want to be specific
+# -def = use all defaults. this happens by defahult but its here if you want to be specific
 # -h = set hurricane data file
 # -l = set location file
 # -r = set output file
