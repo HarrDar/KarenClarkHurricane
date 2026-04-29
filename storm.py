@@ -34,6 +34,7 @@ def readStormFile(fileName):
 
 class Reading:
 	time = None
+	# Certain variable information taken from github.com/dankovacek/hurdat. No code was taken from this assignment, just descriptions from the README.
 	# C – Closest approach to a coast, not followed by a landfall
 	# G – Genesis
 	# I – An intensity peak in terms of both pressure and wind
