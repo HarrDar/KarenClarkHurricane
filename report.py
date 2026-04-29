@@ -1,5 +1,6 @@
 import os
 
+# This headers kinda arbitrary size-wise, just gave 15 characters to name and the rest fits within the title
 header = "NAME           LANDFALL_DATE  MAX_WIND_SPEED(kn)"
 
 # populateReport will run through each of the storms to see if they hit using the hitBy function in the location class.
