@@ -1,5 +1,8 @@
 # Harrison Darbin - Karen Clark & Co. Home Coding Project
-Thank you for the opportunity to show my code to the team!
+Thank you for the opportunity to show my coding to the team! I had a lot of fun being able to work with even just a little bit of the data, and it left me wanting to do much more with it, so I fleshed out every part of it that I could! For simplicity I still just kept it to the landfall statistics as requested.
+### Required Packages
+geojson\
+shapely
 ## File Breakdown
 generateReport.py - What to run for the actual given assignment. Script that links everything together to generate the report file. Arguments given below. \
 storm.py - Contains functions & classes for reading in HURDAT data sets.\
@@ -11,3 +14,14 @@ data/ - Input data to be used\
 reports/ - Where output will be generated.\
 &emsp;[locationReport].txt - Report generated for given location.
 ## generateReport
+Running generateReport will create a report of what hurricanes made landfall in the given location, defaulting to Florida. The input data, location data, and report location can be customized with flags. The hurricane and location data must be placed in the data folder, and the report will always generate in the report folder. All the flags are as follows:\
+&emsp;-def - Use all "default" values (those asked for in the assignment). The script does this automatically, but this can be set to be shown explicitly.\
+&emsp;-h - Set the hurricane data file, 'hurdat2.txt' by default. Text files are expected.\
+&emsp;-l - Set the location data file, 'florida.geojson' by defualt. GeoJSON files are expected.\
+&emsp;-r - Set the report file, 'FloridaReport.txt' by default. This will overwrite an existing file.\
+&emsp;-f - Set the starting year, 1900 by default. A hurricane is included in a given year if it has any activity in that year, even if the landfall was in a previous year.\
+&emsp;-p - Set report output to print to console instead, useful for debugging.\
+I.E.\
+```python3 generateReport.py -h hurdat9000.txt -l djibouti.geojson -r DjiboutiReport.txt -d 1999```\
+```python3 generateReport.py -def -p```\
+or even just ```python3 generateReport.py``` for the default (requested) report!\

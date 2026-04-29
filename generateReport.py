@@ -8,6 +8,7 @@ import report
 defaultData = "data/hurdat2.txt"
 defaultLocation = "data/florida.geojson"
 defaultReport = "reports/FloridaReport.txt"
+defaultDateStart = 1900
 
 flags = ['-d', '-h', '-l', '-r', '-p']
 
@@ -15,16 +16,20 @@ def isFileFormat(file, form):
 	return file[-1*len(form):] == form
 
 def stripFileFormat(file, form):
-	return file[:-1*len(form)]
+	nf = file[:-1*len(form)]
+	while nf.find('/') != -1:
+		nf = nf[nf.index('/')+1:]
+	return nf
 
 # arguments processed in order given in command; i.e. -d will overwrite previous flags
-# -d = use all defaults. this happens by default but its here if you want to be specific
+# -def = use all defaults. this happens by default but its here if you want to be specific
 # -h = set hurricane data file
 # -l = set location file
 # -r = set output file
+# -d = set starting year
 # -p = print output to console instead
 def generateReport(args):
-	dataFile, locationFile, reportFile = defaultData, defaultLocation, defaultReport
+	dataFile, locationFile, reportFile, startingDate = defaultData, defaultLocation, defaultReport, defaultDateStart
 	toPrint = False
 
 	# Argument Handling
@@ -38,7 +43,7 @@ def generateReport(args):
 			if a not in flags:
 				errFlags.append("ERR: UNKNOWN FLAG " + args[i])
 			# Default flag needs no further input
-			elif a == "-d":
+			elif a == "-def":
 				dataFile = defaultData
 				locationFile = defaultLocation
 				reportFile = defaultReport
@@ -73,11 +78,16 @@ def generateReport(args):
 							errFlags.append("ERR: NO FILENAME GIVEN FOR LOCATION DATA")
 						else:
 							locationFile = "data/" + f
+					elif a == '-d':
+						if not f.isnumeric():
+							errFlags.append("ERR: INVALID STARTING YEAR")
+						else:
+							startingDate = int(f)
 					elif a == '-r':
-						reportFile = "report/" + f
+						reportFile = "reports/" + f
 		# Case Floating Argument
 		elif len(a) > 0:
-			errFlags.append("ERR: ARGUMENT GIVEN WITH NO FLAG " + a)
+			errFlags.append("ERR: ARGUMENT " + a + " GIVEN WITH NO FLAG ")
 		# Is this even possible?
 		else:
 			errFlags.append("ERR: EMPTY ARGUMENT")
@@ -94,6 +104,6 @@ def generateReport(args):
 	location = geo.Location(stripFileFormat(locationFile, '.geojson'), locationFile)
 
 	# Generate Report
-	report.populateReport(reportFile,storms,location, toPrint)
+	report.populateReport(reportFile,storms,location,startingDate,toPrint)
 			
 generateReport(sys.argv)

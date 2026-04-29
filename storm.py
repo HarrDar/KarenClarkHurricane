@@ -55,7 +55,6 @@ class Reading:
 	winds = {}
 
 	def __init__(self,data):
-		# self.time = datetime.datetime.fromisoformat(data[0] + data[1].replace(" ",""))
 		# YYYYMMDD & HHMM
 		cleanDate = data[0].replace(" ","")
 		cleanTime = data[1].replace(" ","")
@@ -113,6 +112,9 @@ class Storm:
 
 	def getMaxWindSpeed(self):
 		return self.maxWindSpeed
+
+	def getLatestDate(self):
+		return self.readings[-1].getDate()
 
 	def getLandfallDate(self):
 		for reading in self.readings:

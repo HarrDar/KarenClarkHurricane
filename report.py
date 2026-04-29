@@ -2,7 +2,7 @@ import os
 
 header = "NAME           LANDFALL_DATE  MAX_WIND_SPEED(kn)"
 
-def populateReport(reportFile, storms, location, toPrint):
+def populateReport(reportFile, storms, location, startingDate, toPrint):
 	f = None
 	if toPrint:
 		printReport()
@@ -11,13 +11,13 @@ def populateReport(reportFile, storms, location, toPrint):
 
 	hitCt = 0
 	for st in storms:
-		if location.hitBy(st):
+		if st.getLatestDate().year >= startingDate and location.hitBy(st):
 			hitCt += 1
-			addStormToReport(f,st, toPrint)
+			addStormToReport(f,st,toPrint)
 			
 	if not toPrint:
 		f.close()
-		print("Output completed!", hitCt, "Storms hit given location.")
+		print("Output completed!", hitCt, "Storms hit", location.name, "since", startingDate,)
 
 def createReport(fileName):
 	f = open(fileName, 'w')
