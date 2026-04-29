@@ -1,6 +1,8 @@
 import os
 import datetime
 
+# readStormFile processes all the HURDAT2 data and converts it into Storm and Reading classes, where Storms contain many Readings.
+# Reads in files line by line, picking up on different line formats for when to start new storms.
 def readStormFile(fileName):
 	storms = []
 	newstorm = None
@@ -9,15 +11,20 @@ def readStormFile(fileName):
 	print("File", fileName, "opened, beginning processing...")
 	for line in file:
 		data = line.strip().split(',')
+		# Case Storm
 		if len(data) == 4:
+			# If a current storm is being read, it is finished and added to the list
 			if newstorm is not None:
 				storms.append(newstorm)
 				ct +=1
 			newstorm = Storm(data)
+		# Case Reading
 		elif newstorm is not None and len(data) == 21:
 			newstorm.addReading(data)
+		# None of these, thankfully!
 		else:
 			print("ERR: IMPROPER DATA LINE")
+	# Edge case; last storm still needs to be added.
 	if newstorm is not None:
 		storms.append(newstorm)
 		ct += 1
@@ -36,9 +43,12 @@ class Reading:
 	# S – Change of status of the system
 	# T – Provides additional detail on the track (position) of the cyclone
 	# W – Maximum sustained wind speed
-	# LANDFALLS IDENTIFIED HERE ONLY USED FOR VERIFICATION
+	#
+	# vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+	# LANDFALLS IDENTIFIED HERE NOT USED FOR ANYTHING IN THIS ASSIGNMENT
+	# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 	record_identifier = False
-	# For MY calculations
+	# THIS is the landfall indicator I use for the report.
 	landed = False
 	# TD – Tropical cyclone of tropical depression intensity (< 34 knots)
 	# TS – Tropical cyclone of tropical storm intensity (34-63 knots)
@@ -57,6 +67,7 @@ class Reading:
 	wind_types = ['34_kt_ne','34_kt_se','34_kt_sw','34_kt_nw','50_kt_ne','50_kt_se','50_kt_sw','50_kt_nw','64_kt_ne','64_kt_se','64_kt_sw','64_kt_nw']
 	winds = {}
 
+	# reading initilization just cleans and organizes the data, even though most of it is unused for this assignment.
 	def __init__(self,data):
 		# YYYYMMDD & HHMM
 		cleanDate = data[0].replace(" ","")
@@ -77,14 +88,13 @@ class Reading:
 	def getDate(self):
 		return self.time
 
+	# I'll admit i'm not a fan of this ambiguous "landed" variable since the location isn't known in the scope of this class, but this assignment 
+	# is simple enough to have a catch-all landfall indicator be just fine. It's the first thing I would change if this were to be expanded upon.
 	def Landed(self):
 		self.landed = True
 
 	def isLanded(self):
 		return self.landed
-
-	def NotLanded(self):
-		self.landed = False
 
 	def getMaxWind(self):
 		return self.max_wind_kts
@@ -98,10 +108,12 @@ class Storm:
 	
 	def __init__(self, data):
 		self.storm_id = data[0]
+		# hurdat2 has a lot of space formatting we gotta remove
 		self.storm_name = data[1].replace(" ", "")
 		self.number_obs = int(data[2])
 		self.readings = []
 
+	# readings are read in in date order, so no sorting needed. We also check for a new max wind when adding to save time later.
 	def addReading(self,data):
 		newReading = Reading(data)
 		self.readings.append(newReading)
@@ -119,6 +131,7 @@ class Storm:
 	def getLatestDate(self):
 		return self.readings[-1].getDate()
 
+	# Once again, this ambiguous "landfall indicator" is the first thing I'd like to change, but it works just fine for now.
 	def getLandfallDate(self):
 		for reading in self.readings:
 			if reading.isLanded():
